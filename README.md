@@ -4,4 +4,4 @@ This repository features the first project of the **Boot.dev** stage with **FTS*
 ---
   
 Author: **Ghassan Qasrawi**   
-Boot.dev handle: **@ghassan-qasrawi**
+Boot.dev handle: **@ghassan-qasrawi** ([Account link](https://www.boot.dev/u/ghassan-qasrawi))

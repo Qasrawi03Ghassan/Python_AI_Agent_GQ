@@ -10,7 +10,7 @@ def get_file_content(working_directory: str, file_path: str) -> str:
     
 
         if not valid_target_path:
-            return f'Error: Cannot list "{file_path}" as it is outside the permitted working directory'
+            return f'Error: Cannot read "{file_path}" as it is outside the permitted working directory'
         
         is_file = os.path.isfile(target_path)
 

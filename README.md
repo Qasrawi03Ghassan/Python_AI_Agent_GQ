@@ -1,6 +1,8 @@
 # Python AI Agent
 This repository features the first project of the **Boot.dev** stage with **FTS** internship program which is building an **AI Agent** using **python**, built using `uv` python package manager and Google `Gemini-2.5-flash` model.  
 
+**IMPORTANT**: This is not a production level AI agent so it does **NOT** have all the security and saftey features that a production one has. It's for learning purposes only
+
 ---
   
 Author: **Ghassan Qasrawi**   

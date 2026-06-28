@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import argparse
+from prompts import system_prompt
+from functions.call_functions import available_functions
 
 
 load_dotenv()
@@ -10,6 +12,7 @@ api_key = os.environ.get("GEMINI_API_KEY")
 
 def main():
     print("Hello from Python-AI-Agent-GQ!")
+    print('\n')
 
     if not api_key or api_key is None:
         raise RuntimeError("Could not get API key for GEMINI")
@@ -26,7 +29,7 @@ def main():
     ]
 
 
-    response = client.models.generate_content(model="gemini-2.5-flash",contents=messages_list)
+    response = client.models.generate_content(model="gemini-2.5-flash",contents=messages_list,config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt,temperature=0))
 
     metadata = response.usage_metadata
     if not metadata or metadata is None:
@@ -40,8 +43,14 @@ def main():
         print("Prompt tokens: " + str(prompt_tokens))
         print("Response tokens: " + str(response_tokens))
 
-    print("Response:\n"+response.text)
 
+    if response.function_calls is None:
+        print("Response:\n"+response.text)
+
+
+    if not response.function_calls is None:
+        for function_call in response.function_calls:
+            print(f"Calling function: {function_call.name}({function_call.args})")
 
 
 if __name__ == "__main__":

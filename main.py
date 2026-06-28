@@ -28,8 +28,12 @@ def main():
         types.Content(role="user", parts=[types.Part(text=args.user_prompt)])
     ]
 
-    #gemini-2.5-flash ==> gemini-2.5-flash-light
-    response = client.models.generate_content(model="gemini-2.5-flash-lite",contents=messages_list,config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt,temperature=0))
+    try:
+         
+        response = client.models.generate_content(model="gemini-2.5-flash",contents=messages_list,config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt,temperature=0))
+    except Exception as e:
+         print(f'ERROR: gemini API error: {e}')
+         return
 
     metadata = response.usage_metadata
     if not metadata or metadata is None:
@@ -52,18 +56,21 @@ def main():
                     #print(f"Calling function: {function_call.name}({function_call.args})")
 
                     function_call_result = call_function(function_call=function_call,verbose=args.verbose)
-                    if not function_call_result.parts:
+                    if function_call_result.parts is None:
                         raise Exception(f'function_call_result doesn\'t have parts list')
                     
-                    if not function_call_result.parts[0].function_response:
+                    if function_call_result.parts[0].function_response is None:
                          raise Exception(f'function_call_result.parts[0].function_response is none')
                     
-                    if not function_call_result.parts[0].function_response.response:
+                    if function_call_result.parts[0].function_response.response is None:
                          raise Exception(f'function_call_result.parts[0].function_response.response is none')
                     
                     function_responses.append(function_call_result.parts[0])
                     if args.verbose:
                          print(f"-> {function_call_result.parts[0].function_response.response}")
+                    else:
+                         print(function_call_result.parts[0].function_response.response)
+                         
             
 
 

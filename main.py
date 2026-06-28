@@ -4,7 +4,7 @@ from google import genai
 from google.genai import types
 import argparse
 from prompts import system_prompt
-from functions.call_functions import available_functions
+from functions.call_functions import available_functions,call_function
 
 
 load_dotenv()
@@ -43,14 +43,29 @@ def main():
         print("Prompt tokens: " + str(prompt_tokens))
         print("Response tokens: " + str(response_tokens))
 
-
+    function_responses = []
     if response.function_calls is None:
         print("Response:\n"+response.text)
 
+    else:
+                for function_call in response.function_calls:
+                    #print(f"Calling function: {function_call.name}({function_call.args})")
 
-    if not response.function_calls is None:
-        for function_call in response.function_calls:
-            print(f"Calling function: {function_call.name}({function_call.args})")
+                    function_call_result = call_function(function_call=function_call,verbose=args.verbose)
+                    if not function_call_result.parts:
+                        raise Exception(f'function_call_result doesn\'t have parts list')
+                    
+                    if not function_call_result.parts[0].function_response:
+                         raise Exception(f'function_call_result.parts[0].function_response is none')
+                    
+                    if not function_call_result.parts[0].function_response.response:
+                         raise Exception(f'function_call_result.parts[0].function_response.response is none')
+                    
+                    function_responses.append(function_call_result.parts[0])
+                    if args.verbose:
+                         print(f"-> {function_call_result.parts[0].function_response.response}")
+            
+
 
 
 if __name__ == "__main__":
